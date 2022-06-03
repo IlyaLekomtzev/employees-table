@@ -1,5 +1,7 @@
 # Employees table
 
+[Ссылка на приложение](https://employees-table.netlify.app/)
+
 ## Стек
 
 React, Effector, Typescript
