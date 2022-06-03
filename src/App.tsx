@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
+import { Row, Col } from 'antd';
+import MainLayout from './components/MainLayout';
+import EmployeeTable from 'components/EmployeeTable';
+import EditForm from 'components/EditForm';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    return (
+        <MainLayout>
+            <Row>
+                <Col span={12}>
+                    <EmployeeTable />
+                </Col>
+                <Col span={12}>
+                    <EditForm />
+                </Col>
+            </Row>
+        </MainLayout>
+    );
+};
 
 export default App;
