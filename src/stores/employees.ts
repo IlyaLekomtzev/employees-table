@@ -1,6 +1,8 @@
-import { createEvent, createStore } from 'effector';
+import axios from 'axios';
+import { apiUrl } from 'constants/api';
+import { createEffect, createEvent, createStore } from 'effector';
 import connectLocalStorage from 'effector-localstorage/sync';
-import { IEmployee } from 'types/data';
+import { IEmployee, IEmployeeRequest } from 'types/data';
 
 // Local storage connection
 
@@ -9,14 +11,43 @@ const employeesLocalStorage = connectLocalStorage('employees')
 
 // Events
 
-const addEmployee = createEvent<IEmployee>('Add employee');
 const editEmployee = createEvent<IEmployee>('Edit employee');
-const deleteEmployee = createEvent<string>('Delete employee');
+
+// Effects
+
+const getEmployeesFx = createEffect({
+    handler: async () => {
+        const { data } = await axios.get<IEmployee[]>(apiUrl);
+        return data;
+    }
+});
+
+const addEmployeeFx = createEffect({
+    handler: async (employee: IEmployeeRequest) => {
+        const { data } = await axios.post<IEmployee>(apiUrl, employee);
+        return data;
+    }
+});
+
+const editEmployeeFx = createEffect({
+    handler: async (employee: IEmployee) => {
+        const { data } = await axios.put<IEmployee>(`${apiUrl}/${employee.key}`, employee);
+        return data;
+    }
+});
+
+const deleteEmployeeFx = createEffect({
+    handler: async (id: string) => {
+        const { data } = await axios.delete<IEmployee>(`${apiUrl}/${id}`);
+        return data;
+    }
+});
 
 // Stores
 
 const employees = createStore<IEmployee[]>(employeesLocalStorage.init([]))
-    .on(addEmployee, (state, payload) => [
+    .on(getEmployeesFx.doneData, (_, payload) => payload)
+    .on(addEmployeeFx.doneData, (state, payload) => [
         ...state,
         payload
     ])
@@ -31,20 +62,25 @@ const employees = createStore<IEmployee[]>(employeesLocalStorage.init([]))
 
         return state;
     })
-    .on(deleteEmployee, (state, key) => state.filter((item) => item.key !== key));
+    .on(deleteEmployeeFx.doneData, (state, payload) => state.filter((item) => item.key !== payload.key));
 
 employees.watch(employeesLocalStorage);
 
 // Exports
 
+const employeesEffects = {
+    getEmployeesFx,
+    addEmployeeFx,
+    editEmployeeFx,
+    deleteEmployeeFx
+};
+
 const employeesEvents = {
-    addEmployee,
-    editEmployee,
-    deleteEmployee
+    editEmployee
 };
 
 const employeesStores = {
     employees
 };
 
-export { employeesEvents, employeesStores };
+export { employeesEffects, employeesEvents, employeesStores };

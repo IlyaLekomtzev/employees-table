@@ -39,8 +39,8 @@ const EditForm = () => {
         }
     };
 
-    const handleGenderChange = (value?: Gender) => {
-        changeGender(value || undefined);
+    const handleGenderChange = (value: Gender) => {
+        changeGender(value);
     };
 
     const handleFiredChange = (e: CheckboxChangeEvent) => {
@@ -97,7 +97,6 @@ const EditForm = () => {
                             style={{ width: '100%' }}
                             onChange={handleGenderChange}
                         >
-                            <Option value="">Do not specify</Option>
                             {genderOptions.map(({ label, value }) => (
                                 <Option key={value} value={value}>{label}</Option>
                             ))}

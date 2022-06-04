@@ -1,0 +1,1 @@
+export const apiUrl = 'https://629b46c6656cea05fc3691f4.mockapi.io/api/employees';

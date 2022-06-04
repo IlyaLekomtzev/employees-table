@@ -5,6 +5,8 @@ export interface IEmployee {
     name: string;
     birthday: string;
     isFired: boolean;
-    gender?: Gender;
-    position?: Position;
+    gender: Gender;
+    position: Position;
 }
+
+export type IEmployeeRequest = Omit<IEmployee, 'key'>;

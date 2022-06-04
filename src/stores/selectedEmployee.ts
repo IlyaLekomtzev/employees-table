@@ -1,19 +1,21 @@
 import { Gender, Position } from 'constants/data';
 import { createEvent, createStore } from 'effector';
 import { IEmployee } from 'types/data';
-import { employeesEvents } from './employees';
+import { employeesEvents, employeesEffects } from './employees';
 
-const { deleteEmployee, editEmployee } = employeesEvents;
+const { editEmployee } = employeesEvents;
+const { deleteEmployeeFx, editEmployeeFx } = employeesEffects;
 
 // Events
 
 const setEmployee = createEvent<IEmployee | null>('Set employee');
+const saveEmployee = createEvent('Save employee');
 const resetEmployee = createEvent('Reset employee');
 
 const changeName = createEvent<string>('Change name');
 const changePosition = createEvent<Position>('Change position');
 const changeBirthday = createEvent<string>('Change birthday');
-const changeGender = createEvent<Gender | undefined>('Change gender');
+const changeGender = createEvent<Gender>('Change gender');
 const changeIsFired = createEvent<boolean>('Change is fired');
 
 // Stores
@@ -55,7 +57,7 @@ const employee = createStore<IEmployee | null>(null)
 
         return state;
     })
-    .reset([resetEmployee, deleteEmployee]);
+    .reset([resetEmployee, deleteEmployeeFx.done]);
 
 [changeName, changePosition, changeBirthday, changeGender, changeIsFired].forEach((event) => {
     employee.watch<string | undefined | boolean>(event, (state) => {
@@ -65,10 +67,21 @@ const employee = createStore<IEmployee | null>(null)
     });
 });
 
+employee.watch(saveEmployee, (state) => {
+    if (state) {
+        editEmployeeFx(state);
+    }
+});
+
+const changed = createStore<boolean>(false)
+    .on([changeName, changePosition, changeBirthday, changeGender, changeIsFired], () => (true))
+    .reset([resetEmployee, deleteEmployeeFx.done, editEmployeeFx.done]);
+
 // Exports
 
 const employeeEvents = {
     setEmployee,
+    saveEmployee,
     resetEmployee,
     changeName,
     changePosition,
@@ -78,7 +91,8 @@ const employeeEvents = {
 };
 
 const employeeStores = {
-    employee
+    employee,
+    changed
 };
 
 export { employeeEvents, employeeStores };

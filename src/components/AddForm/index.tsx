@@ -1,31 +1,35 @@
 import { Form, Input, Button, Checkbox, Select, DatePicker } from 'antd';
 import moment from 'moment';
-import { IEmployee } from 'types/data';
+import { IEmployeeRequest } from 'types/data';
 import { genderOptions, positionOptions } from 'constants/options';
-import { employeesEvents } from 'stores/employees';
+import { useStore } from 'effector-react';
+import { employeesEffects } from 'stores/employees';
 import { addModalEvents } from 'stores/addModal';
-import { birthdayRules, dateFormat, nameRules, positionRules } from 'constants/forms';
+import { birthdayRules, dateFormat, nameRules, positionRules, genderRules } from 'constants/forms';
 import { initialFormValues } from './constants';
 
-const { addEmployee } = employeesEvents;
+const { addEmployeeFx } = employeesEffects;
 const { setIsModalVisible } = addModalEvents;
 
 const { Option } = Select;
 
 const AddForm = () => {
+    const isLoading = useStore(addEmployeeFx.pending);
     const [form] = Form.useForm();
 
-    const onFinish = (values: Omit<IEmployee, 'key'>) => {
-        addEmployee({
-            key: Date.now().toString(),
+    const onFinish = (values: IEmployeeRequest) => {
+        addEmployeeFx({
             name: values.name,
             birthday: moment(values.birthday).format(dateFormat),
             position: values.position,
             isFired: values.isFired,
             gender: values.gender
         });
-        setIsModalVisible(false);
-        form.resetFields();
+
+        addEmployeeFx.done.watch(() => {
+            setIsModalVisible(false);
+            form.resetFields();
+        });
     };
 
     return (
@@ -73,6 +77,7 @@ const AddForm = () => {
             <Form.Item
                 name="gender"
                 label="Gender"
+                rules={genderRules}
             >
                 <Select
                     placeholder="Select a gender"
@@ -90,6 +95,7 @@ const AddForm = () => {
             <Button
                 type="primary"
                 htmlType="submit"
+                loading={isLoading}
             >
                 Save
             </Button>

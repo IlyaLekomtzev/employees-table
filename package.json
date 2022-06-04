@@ -11,6 +11,7 @@
     "@types/react": "^18.0.10",
     "@types/react-dom": "^18.0.5",
     "antd": "^4.20.7",
+    "axios": "^0.27.2",
     "effector": "^22.3.0",
     "effector-localstorage": "^0.5.3",
     "effector-react": "^22.0.6",

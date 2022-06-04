@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Table } from 'antd';
 import { useStore } from 'effector-react';
 import { employeeEvents, employeeStores } from 'stores/selectedEmployee';
-import { employeesStores } from 'stores/employees';
+import { employeesStores, employeesEffects } from 'stores/employees';
 import { genderLabels } from 'constants/data';
 import { columns, defaultRowSelectionParams } from './constants';
 import { TableData } from './types';
@@ -11,8 +11,10 @@ import { TableWrapper } from './styles';
 const { setEmployee, resetEmployee } = employeeEvents;
 const { employee } = employeeStores;
 const { employees: employeesStore } = employeesStores;
+const { getEmployeesFx } = employeesEffects;
 
 const EmployeeTable = () => {
+    const isLoading = useStore(getEmployeesFx.pending);
     const selectEmployee = useStore(employee);
     const employees = useStore(employeesStore);
 
@@ -40,6 +42,10 @@ const EmployeeTable = () => {
         }
     };
 
+    useEffect(() => {
+        getEmployeesFx();
+    }, []);
+
     return (
         <TableWrapper>
             <Table
@@ -49,6 +55,7 @@ const EmployeeTable = () => {
                     onSelect: handleRowSelect,
                     selectedRowKeys: selectEmployee ? [selectEmployee.key] : []
                 }}
+                loading={isLoading}
                 columns={columns}
                 dataSource={items}
                 pagination={false}
