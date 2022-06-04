@@ -9,18 +9,19 @@ import AddModal from 'components/AddModal';
 
 const { employee, changed } = employeeStores;
 const { resetEmployee, saveEmployee } = employeeEvents;
-const { deleteEmployeeFx, editEmployeeFx } = employeesEffects;
+const { deleteEmployeeFx, editEmployeeFx, getEmployeesFx } = employeesEffects;
 const { setIsModalVisible } = addModalEvents;
 
-const { Header, Content  } = Layout;
+const { Header, Content } = Layout;
 
-interface Props extends Children {}
+interface Props extends Children { }
 
 const MainLayout: FC<Props> = ({ children }) => {
     const selectEmployee = useStore(employee);
     const isChanged = useStore(changed);
     const isDeleteLoading = useStore(deleteEmployeeFx.pending);
     const isSaveLoading = useStore(editEmployeeFx.pending);
+    const isDataLoading = useStore(getEmployeesFx.pending);
 
     const handleDelete = () => {
         if (selectEmployee) {
@@ -36,10 +37,30 @@ const MainLayout: FC<Props> = ({ children }) => {
         saveEmployee();
     };
 
+    const handleRefresh = () => {
+        getEmployeesFx();
+    };
+
     return (
         <>
             <Header>
                 <Space>
+                    <Button
+                        type="primary"
+                        size="large"
+                        onClick={handleRefresh}
+                        loading={isDataLoading}
+                    >
+                        Refresh
+                    </Button>
+                    <Button
+                        type="primary"
+                        size="large"
+                        onClick={handleUnselect}
+                        disabled={selectEmployee === null}
+                    >
+                        Unselect
+                    </Button>
                     <Button
                         type="primary"
                         size="large"
@@ -66,18 +87,10 @@ const MainLayout: FC<Props> = ({ children }) => {
                     >
                         Save
                     </Button>
-                    <Button
-                        type="primary"
-                        size="large"
-                        onClick={handleUnselect}
-                        disabled={selectEmployee === null}
-                    >
-                        Unselect
-                    </Button>
                 </Space>
             </Header>
 
-            <Content style={{padding: '0 50px'}}>
+            <Content style={{ padding: '0 50px' }}>
                 {children}
             </Content>
 

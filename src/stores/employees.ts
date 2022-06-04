@@ -1,5 +1,16 @@
+import { notification } from 'antd';
 import axios from 'axios';
 import { apiUrl } from 'constants/api';
+import {
+    errorEmployeeAdded,
+    errorEmployeeDeleted,
+    errorEmployeeSaved,
+    errorTitle,
+    successEmployeeAdded,
+    successEmployeeDeleted,
+    successEmployeeSaved,
+    successTitle
+} from 'constants/data';
 import { createEffect, createEvent, createStore } from 'effector';
 import connectLocalStorage from 'effector-localstorage/sync';
 import { IEmployee, IEmployeeRequest } from 'types/data';
@@ -65,6 +76,50 @@ const employees = createStore<IEmployee[]>(employeesLocalStorage.init([]))
     .on(deleteEmployeeFx.doneData, (state, payload) => state.filter((item) => item.key !== payload.key));
 
 employees.watch(employeesLocalStorage);
+
+// Notifications
+
+addEmployeeFx.done.watch(() => {
+    notification.open({
+        message: successTitle,
+        description: successEmployeeAdded
+    });
+});
+
+addEmployeeFx.fail.watch(() => {
+    notification.open({
+        message: errorTitle,
+        description: errorEmployeeAdded
+    });
+});
+
+editEmployeeFx.done.watch(() => {
+    notification.open({
+        message: successTitle,
+        description: successEmployeeSaved
+    });
+});
+
+editEmployeeFx.fail.watch(() => {
+    notification.open({
+        message: errorTitle,
+        description: errorEmployeeSaved
+    });
+});
+
+deleteEmployeeFx.done.watch(() => {
+    notification.open({
+        message: successTitle,
+        description: successEmployeeDeleted
+    });
+});
+
+deleteEmployeeFx.fail.watch(() => {
+    notification.open({
+        message: errorTitle,
+        description: errorEmployeeDeleted
+    });
+});
 
 // Exports
 

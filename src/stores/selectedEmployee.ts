@@ -75,7 +75,7 @@ employee.watch(saveEmployee, (state) => {
 
 const changed = createStore<boolean>(false)
     .on([changeName, changePosition, changeBirthday, changeGender, changeIsFired], () => (true))
-    .reset([resetEmployee, deleteEmployeeFx.done, editEmployeeFx.done]);
+    .reset([setEmployee, resetEmployee, deleteEmployeeFx.done, editEmployeeFx.done]);
 
 // Exports
 
