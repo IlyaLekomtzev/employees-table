@@ -8,10 +8,10 @@ const App = () => {
     return (
         <MainLayout>
             <Row>
-                <Col span={12}>
+                <Col xs={24} lg={12}>
                     <EmployeeTable />
                 </Col>
-                <Col span={12}>
+                <Col xs={24} lg={12}>
                     <EditForm />
                 </Col>
             </Row>
