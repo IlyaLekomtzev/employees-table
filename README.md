@@ -4,11 +4,11 @@
 
 ## Стек
 
-React, Effector, Typescript
+React, Effector, Typescript, MockAPI
 
 ## Дополнительные пакеты
 
-Ant-design, styled-components, effector-localstorage
+Ant-design, styled-components, effector-localstorage, axios
 
 ## Установка и запуск
 
